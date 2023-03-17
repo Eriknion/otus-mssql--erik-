@@ -1,8 +1,8 @@
 ﻿/*
-Домашнее задание по курсу Разработчик MS SQL Server в OTUS.
+Домашнее задание по курсу MS SQL Server Developer в OTUS.
 Занятие "10 - Операторы изменения данных".
-Задания зависят от использования базы данных WideWorldImporters.
-Бэкап БД скачать можно отсюда:
+Задания выполняются с использованием базы данных WideWorldImporters.
+Бэкап БД можно скачать отсюда:
 https://github.com/Microsoft/sql-server-samples/releases/tag/wide-world-importers-v1.0
 Нужен WideWorldImporters-Full.bak
 Описание WideWorldImporters от Microsoft:
@@ -10,199 +10,199 @@ https://github.com/Microsoft/sql-server-samples/releases/tag/wide-world-importer
 * https://docs.microsoft.com/ru-ru/sql/samples/wide-world-importers-oltp-database-catalog
 */
 
--------------------------------------------------- _ ---------------------------
--- Задание - написать выборки для получения нижеперечисленного.
--------------------------------------------------- _ ---------------------------
+-- ---------------------------------------------------------------------------
+-- Задание - написать выборки для получения указанных ниже данных.
+-- ---------------------------------------------------------------------------
 
-ИСПОЛЬЗОВАТЬ WideWorldImporters
+USE WideWorldImporters
 
 /*
-1. Создание в базе пяти записей с использованием вставки в таблицу. Заказчики или поставщики.
+1. Довставлять в базу пять записей используя insert в таблицу Customers или Suppliers 
 */
 
-объявить @CustomerID INT ,
-		@CustomerName varchar ( MAX ),
-		@BillToCustomerId INT ,
-		@PrimaryContactPersonID INT ,
-		@DeliveryCityID INT ,
-		@PostalCityID INT ,
-		@AccountOpenedDate ДАТА ,
-		@DeliveryPostalCode INT ,
-		@PostalPostalCode INT ,
+declare @CustomerID INT,
+		@CustomerName varchar(MAX),
+		@BillToCustomerId INT,
+		@PrimaryContactPersonID INT,
+		@DeliveryCityID INT,
+		@PostalCityID INT,
+		@AccountOpenedDate DATE,
+		@DeliveryPostalCode INT,
+		@PostalPostalCode INT,
 		@LastEditedBy INT
 		;
-установить @CustomerID =  СЛЕДУЮЩЕЕ  ЗНАЧЕНИЕ  ДЛЯ ПОСЛЕДОВАТЕЛЬНОСТЕЙ  . Пользовательский ИД
-установить @CustomerName =  ' NEWCustomerName_1'
-установить @BillToCustomerId = @CustomerID
+set @CustomerID = NEXT VALUE FOR Sequences.CustomerID
+set @CustomerName = 'NEWCustomerName_1'
+set @BillToCustomerId = @CustomerID
 
-Выберите   @PrimaryContactPersonID =   PrimaryContactPersonID /* +1 */  из  Sales . Клиенты  как C
-где  С . CustomerID  = ( выберите  MAX ( C1 . CustomerID ) из  Sales . Customers  как C1)
+Select  @PrimaryContactPersonID =  PrimaryContactPersonID/*+1*/ from Sales.Customers as C
+where C.CustomerID = (select MAX(C1.CustomerID) from Sales.Customers as C1)
 
-установить @DeliveryCityID =  29158
-установить @PostalCityID = @DeliveryCityID
-установить @AccountOpenedDate =  GETDATE ()
-установить @DeliveryPostalCode =  90760
-установить @PostalPostalCode = @DeliveryPostalCode
-установить @LastEditedBy =  1
+set @DeliveryCityID = 29158
+set @PostalCityID = @DeliveryCityID
+set @AccountOpenedDate = GETDATE()
+set @DeliveryPostalCode = 90760
+set @PostalPostalCode = @DeliveryPostalCode
+set @LastEditedBy = 1
 
-ОБЪЯВИТЬ @I INT  =  2
+DECLARE @I INT = 2
 
-ПОКА @I <  6
-НАЧИНАТЬ
+WHILE @I < 6
+BEGIN
 
-установить @CustomerID =  СЛЕДУЮЩЕЕ  ЗНАЧЕНИЕ  ДЛЯ ПОСЛЕДОВАТЕЛЬНОСТЕЙ  . Пользовательский ИД
-set @CustomerName =  ' NEWCustomerName_'  +  CONVERT ( varchar ( max ),@I)
-установить @BillToCustomerId = @CustomerID
+set @CustomerID = NEXT VALUE FOR Sequences.CustomerID
+set @CustomerName = 'NEWCustomerName_' + CONVERT(varchar(max),@I)
+set @BillToCustomerId = @CustomerID
 
--- ВЫБЕРИТЕ @CustomerID
+--SELECT @CustomerID
 
-вставить  в  Продажи . Клиенты 
-           ([Пользовательский ИД]
-           ,[Имя Клиента]
-           ,[ID БиллКлиента]
-           ,[ИдентификаторКатегорииЗаказчика]
-           ,[Идентификатор группы закупок]
-           ,[Идентификатор основного контактного лица]
+insert into Sales.Customers 
+           ([CustomerID]
+           ,[CustomerName]
+           ,[BillToCustomerID]
+           ,[CustomerCategoryID]
+           ,[BuyingGroupID]
+           ,[PrimaryContactPersonID]
            ,[AlternateContactPersonID]
-           ,[ID_метода_доставки]
-           ,[ID города доставки]
-           ,[Идентификатор почтового города]
-           ,[Кредитный лимит]
-           ,[дата открытия счета]
-           ,[Стандартный процент скидки]
-           ,[Отправлено Заявление]
+           ,[DeliveryMethodID]
+           ,[DeliveryCityID]
+           ,[PostalCityID]
+           ,[CreditLimit]
+           ,[AccountOpenedDate]
+           ,[StandardDiscountPercentage]
+           ,[IsStatementSent]
            ,[IsOnCreditHold]
            ,[PaymentDays]
-           ,[Номер телефона]
-           ,[Номер факса]
-           ,[Выполнение доставки]
-           ,[РаботаПозиция]
-           ,[URL веб-сайта]
-           ,[ДоставкаАдресСтрока1]
+           ,[PhoneNumber]
+           ,[FaxNumber]
+           ,[DeliveryRun]
+           ,[RunPosition]
+           ,[WebsiteURL]
+           ,[DeliveryAddressLine1]
            ,[DeliveryAddressLine2]
-           ,[Почтовый индекс доставки]
-           ,[Адрес доставки]
-           ,[ПочтовыйАдресСтрока1]
-           ,[ПочтовыйАдресСтрока2]
-           ,[Почтовый индекс]
-           ,[Последнее редактирование])
-ВЫХОД вставлен. * 
+           ,[DeliveryPostalCode]
+           ,[DeliveryLocation]
+           ,[PostalAddressLine1]
+           ,[PostalAddressLine2]
+           ,[PostalPostalCode]
+           ,[LastEditedBy])
+OUTPUT inserted.* 
 
- ЦЕННОСТИ
-           (@Пользовательский ИД
-           ,@Имя Клиента
+ VALUES
+           (@CustomerID
+           ,@CustomerName
            ,@BillToCustomerId
-           , 1
-           , 1
-           , @PrimaryContactPersonID
-           , НОЛЬ
-           , 3
+           ,1
+           ,1
+           ,@PrimaryContactPersonID
+           ,NULL
+           ,3
            ,@DeliveryCityID
-           , @PostalCityID
-           , 5000
+           ,@PostalCityID
+           ,5000
            ,@AccountOpenedDate
-           , 0 . 00
-           , 0
-           , 0
-           , 7
-           , ' (206) 555-0100'
-           , ' (206) 555-0101'
-           , НОЛЬ
-           , НОЛЬ
-           , http://www.microsoft.com/ _
-           , ' Магазин 55'
-           , " 655 Виктория Лейн"
+           ,0.00
+           ,0
+           ,0
+           ,7
+           ,'(206) 555-0100'
+           ,'(206) 555-0101'
+           ,NULL
+           ,NULL
+           ,'http://www.microsoft.com/'
+           ,'Shop 55'
+           ,'655 Victoria Lane'
            ,@DeliveryPostalCode
            ,0xE6100000010C11154FE2182D4740159ADA087A035FC0
-           , а /я 811
-           , Миликавилль _
-           ,@ПочтовыйПочтовыйКод
+           ,'PO Box 811'
+           ,'Milicaville'
+           ,@PostalPostalCode
            ,@LastEditedBy
 		   )
-		   НАБОР @I = @I +  1
-КОНЕЦ
-ИДТИ
+		   SET @I = @I + 1
+END
+GO
 
 /*
-2. Удалите одну запись от клиентов, которая была добавлена ​​вами
+2. Удалите одну запись из Customers, которая была вами добавлена
 */
 
-удалить  ИЗ  Продажи . Клиенты  , для которых [CustomerName] =  ' NEWCustomerName_5'
+delete FROM Sales.Customers where [CustomerName] = 'NEWCustomerName_5'
 
 
 /*
 3. Изменить одну запись, из добавленных через UPDATE
 */
 
-Обновить  продажи . Клиенты
-установите [CreditLimit] =  4999  , где [CustomerName] =  ' NEWCustomerName_4'
+Update Sales.Customers
+set [CreditLimit] = 4999 where [CustomerName] = 'NEWCustomerName_4'
 
 /*
-4. Написать MERGE, который вставит вставит запись в клиенты, если ее там нет, и изменит, если она уже есть
+4. Написать MERGE, который вставит вставит запись в клиенты, если ее там нет, и изменит если она уже есть
 */
 
-ОБЪЕДИНИТЬ 
-Продажи . Клиенты  как трг
-используя ( select  *  FROM  Sales . Customers  where [CustomerName] like  ' NEWCustomerName_1' ) as src
-на  трг . ИмяКлиента  =  источник . Имя Клиента
-КОГДА СООТВЕТСТВУЕТ ТО 
-ОБНОВЛЕНИЕ  УСТАНОВКИ  трг . ИмяКлиента  =  ' NEWCustomerName_101'
-КОГДА  НЕ СООТВЕТСТВУЕТ ТО 
-ВСТАВИТЬ ( [ID клиента]
-           ,[Имя Клиента]
-           ,[ID БиллКлиента]
-           ,[ИдентификаторКатегорииЗаказчика]
-           ,[Идентификатор группы закупок]
-           ,[Идентификатор основного контактного лица]
+MERGE 
+Sales.Customers as trg
+using (select * FROM Sales.Customers where [CustomerName] like 'NEWCustomerName_1') as src 
+on trg.CustomerName = src.CustomerName
+WHEN MATCHED THEN 
+UPDATE SET trg.CustomerName = 'NEWCustomerName_101'
+WHEN NOT MATCHED THEN 
+INSERT (	[CustomerID]
+           ,[CustomerName]
+           ,[BillToCustomerID]
+           ,[CustomerCategoryID]
+           ,[BuyingGroupID]
+           ,[PrimaryContactPersonID]
            ,[AlternateContactPersonID]
-           ,[ID_метода_доставки]
-           ,[ID города доставки]
-           ,[Идентификатор почтового города]
-           ,[Кредитный лимит]
-           ,[дата открытия счета]
-           ,[Стандартный процент скидки]
-           ,[Отправлено Заявление]
+           ,[DeliveryMethodID]
+           ,[DeliveryCityID]
+           ,[PostalCityID]
+           ,[CreditLimit]
+           ,[AccountOpenedDate]
+           ,[StandardDiscountPercentage]
+           ,[IsStatementSent]
            ,[IsOnCreditHold]
            ,[PaymentDays]
-           ,[Номер телефона]
-           ,[Номер факса]
-           ,[Выполнение доставки]
-           ,[РаботаПозиция]
-           ,[URL веб-сайта]
-           ,[ДоставкаАдресСтрока1]
+           ,[PhoneNumber]
+           ,[FaxNumber]
+           ,[DeliveryRun]
+           ,[RunPosition]
+           ,[WebsiteURL]
+           ,[DeliveryAddressLine1]
            ,[DeliveryAddressLine2]
-           ,[Почтовый индекс доставки]
-           ,[Адрес доставки]
-           ,[ПочтовыйАдресСтрока1]
-           ,[ПочтовыйАдресСтрока2]
-           ,[Почтовый индекс]
-           ,[Последнее редактирование])
+           ,[DeliveryPostalCode]
+           ,[DeliveryLocation]
+           ,[PostalAddressLine1]
+           ,[PostalAddressLine2]
+           ,[PostalPostalCode]
+           ,[LastEditedBy])
 
-ЗНАЧЕНИЯ ( src.[CustomerID]
-           , ' NEWCustomerName_101'
-           , src.[BillToCustomerID]
+VALUES (	src.[CustomerID]
+           ,'NEWCustomerName_101'
+           ,src.[BillToCustomerID]
            ,src.[CustomerCategoryID]
-           ,src.[Идентификатор группы закупок]
-           ,src.[Идентификатор основного контактного лица]
+           ,src.[BuyingGroupID]
+           ,src.[PrimaryContactPersonID]
            ,src.[AlternateContactPersonID]
-           , источник.[ID_метода_доставки]
-           , источник. [ID города доставки]
-           , источник.[PostalCityID]
-           , src.[Кредитный лимит]
-           , источник. [Дата Открытия Аккаунта]
-           ,src.[Стандартный процент скидки]
-           , источник.[IsStatementSent]
-           ,источник[IsOnCreditHold]
+           ,src.[DeliveryMethodID]
+           ,src.[DeliveryCityID]
+           ,src.[PostalCityID]
+           ,src.[CreditLimit]
+           ,src.[AccountOpenedDate]
+           ,src.[StandardDiscountPercentage]
+           ,src.[IsStatementSent]
+           ,src.[IsOnCreditHold]
            ,src.[PaymentDays]
-           , источник.[Телефонный номер]
-           ,источник.[НомерФакса]
-           , источник[DeliveryRun]
-           ,источник[RunPosition]
-           , источник [URL-адрес веб-сайта]
-           , источник.[DeliveryAddressLine1]
-           , источник.[DeliveryAddressLine2]
+           ,src.[PhoneNumber]
+           ,src.[FaxNumber]
+           ,src.[DeliveryRun]
+           ,src.[RunPosition]
+           ,src.[WebsiteURL]
+           ,src.[DeliveryAddressLine1]
+           ,src.[DeliveryAddressLine2]
            ,src.[DeliveryPostalCode]
-           , источник. [Место доставки]
+           ,src.[DeliveryLocation]
            ,src.[PostalAddressLine1]
            ,src.[PostalAddressLine2]
            ,src.[PostalPostalCode]
@@ -243,21 +243,21 @@ drop table if exists [dbo].[Sales_FORHW8]
 
 CREATE TABLE [dbo].[Sales_FORHW8](
 	[sales_id] [int] NOT NULL,
-	[customer_id] [int] NOT  NULL ,
-	[item_id] [int] НЕ  NULL )
+	[customer_id] [int] NOT NULL,
+	[item_id] [int] NOT NULL)
 	
-ИДТИ
-	МАССОВАЯ ВСТАВКА [dbo].[Sales_FORHW8]
-				   ИЗ  " C:\Intel\Sales_FORHW8.txt "
-				   С 
+GO
+	BULK INSERT [dbo].[Sales_FORHW8]
+				   FROM "C:\Intel\Sales_FORHW8.txt"
+				   WITH 
 					 (
-						ПАРТИЯ  =  1000 ,
-						DATAFILETYPE  =  ' широкий символ' ,
-						ПОЛЕТЕРМИНАТОР  =  ' $$$' ,
-						ROWTERMINATOR  = ' \n' ,
-						КИПНУЛЛС ,
-						ТАБЛОК        
+						BATCHSIZE = 1000, 
+						DATAFILETYPE = 'widechar',
+						FIELDTERMINATOR = '$$$',
+						ROWTERMINATOR ='\n',
+						KEEPNULLS,
+						TABLOCK        
 					  );
--- --Проверяем результат - работает
-выберите  * 
-ОТ Sales_FORHW8
+----Проверяем результат - работает
+select * 
+FROM Sales_FORHW8 
