@@ -29,7 +29,7 @@ GROUP BY ord.CustomerID, det.StockItemID
 ORDER BY ord.CustomerID, det.StockItemID;
 
 --оптимизация^
---1) рассмотрела join на предмет необходимости использования тех или иных таблиц: удалила join с таблицами Sales.CustomerTransactions и Warehouse.StockItemTransactions, так как данных из них нам неинтересны;
+--1) рассмотрел join на предмет необходимости использования тех или иных таблиц: удалил join с таблицами Sales.CustomerTransactions и Warehouse.StockItemTransactions, так как данных из них нам неинтересны;
 --2) берем все данные из Sales.Invoices;
 --3) делаем join с таблицей Warehouse.StockItems, чтобы избавиться от подзапроса;
 --4) делаем CTE с выборкой из покупателей
